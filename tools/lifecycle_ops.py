@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import os
+import subprocess
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -16,6 +17,10 @@ class Settings:
     default_export_dir: Path = Path(r".\\reports")
 
     @property
+    def fileserver_path(self) -> Path:
+        return self.fileserver_root
+
+    @property
     def assets_path(self) -> Path:
         return self.fileserver_root / self.assets_dir
 
@@ -26,7 +31,11 @@ class Settings:
 
 def load_settings(env_path: Path = Path(".env")) -> Settings:
     load_dotenv(env_path)
-    root = Path(os.environ.get("FILESERVER_ROOT", r"C:\\AssetManagement"))
+    env_root = os.environ.get("FILESERVER_ROOT")
+    if env_root:
+        root = Path(env_root)
+    else:
+        root = Path.home() / "AssetManagement"
     assets_dir = os.environ.get("ASSETS_DIR", "ASSETS")
     templates_dir = os.environ.get("TEMPLATES_DIR", "TEMPLATES")
     export_dir = Path(os.environ.get("DEFAULT_EXPORT_DIR", r".\\reports"))
@@ -37,6 +46,35 @@ def load_settings(env_path: Path = Path(".env")) -> Settings:
         templates_dir=templates_dir,
         default_export_dir=export_dir,
     )
+
+def create_fileserver_structure(settings: Settings) -> subprocess.CompletedProcess:
+    """
+    Run the create_fileserver_structure.ps1 PowerShell script with -RootPath set to assets_path.
+    
+    Args:
+        settings: Settings object containing the assets_path configuration
+        
+    Returns:
+        CompletedProcess object with the result of the PowerShell execution
+    """
+    script_path = Path(__file__).parent.parent / "scripts" / "create_fileserver_structure.ps1"
+    fileserver_root = settings.fileserver_root
+    
+    command = [
+        "powershell.exe",
+        "-ExecutionPolicy", "Bypass",
+        "-File", str(script_path),
+        "-RootPath", str(fileserver_root)
+    ]
+    
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    if result.returncode != 0:
+        print(f"Error executing script: {result.stderr}")
+    else:
+        print(f"Script executed successfully: {result.stdout}")
+    
+    return result
 
 
 def get_current_phase(asset_folder: Path) -> str:

@@ -60,7 +60,7 @@ foreach ($folder in $Level1Folders) {
     $path = Join-Path $RootPath $folder
     if (-not (Test-Path $path)) {
         New-Item -ItemType Directory -Path $path | Out-Null
-        Write-Host "  ✓ Created: $folder" -ForegroundColor Gray
+        Write-Host "   Created: $folder" -ForegroundColor Gray
     }
 }
 
@@ -89,7 +89,7 @@ foreach ($dept in $CorpDepts.Keys) {
         $subPath = Join-Path $deptPath $subfolder
         New-Item -ItemType Directory -Path $subPath -Force | Out-Null
     }
-    Write-Host "  ✓ Created: $dept with subfolders" -ForegroundColor Gray
+    Write-Host "   Created: $dept with subfolders" -ForegroundColor Gray
 }
 
 # ========================================
@@ -104,7 +104,7 @@ $years = @($currentYear, ([int]$currentYear - 1).ToString(), ([int]$currentYear 
 foreach ($year in $years) {
     $yearPath = Join-Path $ArchivePath $year
     New-Item -ItemType Directory -Path $yearPath -Force | Out-Null
-    Write-Host "  ✓ Created: Archive year $year" -ForegroundColor Gray
+    Write-Host "   Created: Archive year $year" -ForegroundColor Gray
 }
 
 Write-Host "`n  NOTE: Archive contains assets by year only" -ForegroundColor Yellow
@@ -129,7 +129,7 @@ $TemplateFolders = @(
 foreach ($folder in $TemplateFolders) {
     $path = Join-Path $TemplatePath $folder
     New-Item -ItemType Directory -Path $path -Force | Out-Null
-    Write-Host "  ✓ Created: $folder" -ForegroundColor Gray
+    Write-Host "   Created: $folder" -ForegroundColor Gray
 }
 
 # ========================================
@@ -268,7 +268,7 @@ foreach ($phase in $LifecycleStructure.Keys) {
     }
 }
 
-Write-Host "  ✓ Created: Asset Lifecycle Template with 14 phases" -ForegroundColor Gray
+Write-Host "   Created: Asset Lifecycle Template with 14 phases" -ForegroundColor Gray
 
 # ========================================
 # DETAILED SUBFOLDERS (Key Ones)
@@ -319,7 +319,7 @@ foreach ($path in $revenueOPEX.Keys) {
     }
 }
 
-Write-Host "  ✓ Created: Detailed subfolder structure" -ForegroundColor Gray
+Write-Host "   Created: Detailed subfolder structure" -ForegroundColor Gray
 
 # ========================================
 # CREATE CSV TEMPLATES IN EXCEL_TEMPLATES
@@ -590,7 +590,7 @@ WAR-015,Civil Works,Structural foundation works,1,All Foundations,Civil Contract
 "@
 Set-Content -Path "$ExcelTemplatesPath\Warranty_Register_Template.csv" -Value $warrantyCsv
 
-Write-Host "  ✓ Created: 5 CSV template files in EXCEL_TEMPLATES folder" -ForegroundColor Gray
+Write-Host "   Created: 5 CSV template files in EXCEL_TEMPLATES folder" -ForegroundColor Gray
 
 # ========================================
 # CREATE STATUS FILE TEMPLATE
@@ -700,11 +700,11 @@ Write-Host ""
 Write-Host "Location: $RootPath" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Key Advantages of SIMPLIFIED System:" -ForegroundColor Yellow
-Write-Host "  ✓ ALL assets in one ASSETS\ folder - ultra simple!" -ForegroundColor Green
-Write-Host "  ✓ NO folder movement EVER - assets stay put!" -ForegroundColor Green
-Write-Host "  ✓ Status files show phase - no category management!" -ForegroundColor Green
-Write-Host "  ✓ Easy sorting and searching by any criteria" -ForegroundColor Green
-Write-Host "  ✓ Complete audit trail with numbered status files" -ForegroundColor Green
+Write-Host "   ALL assets in one ASSETS\ folder - ultra simple!" -ForegroundColor Green
+Write-Host "   NO folder movement EVER - assets stay put!" -ForegroundColor Green
+Write-Host "   Status files show phase - no category management!" -ForegroundColor Green
+Write-Host "   Easy sorting and searching by any criteria" -ForegroundColor Green
+Write-Host "   Complete audit trail with numbered status files" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Review the created structure" -ForegroundColor White
