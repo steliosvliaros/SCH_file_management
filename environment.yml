@@ -1,0 +1,12 @@
+name: asset-lifecycle-lite-py312
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pandas
+  - numpy
+  - openpyxl
+  - python-dotenv
+  - jupyterlab
+  - ipykernel

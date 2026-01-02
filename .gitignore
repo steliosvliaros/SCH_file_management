@@ -1,0 +1,11 @@
+__pycache__/
+.ipynb_checkpoints/
+.env
+reports/
+output/
+logs/
+.venv/
+venv/
+env/
+Thumbs.db
+Desktop.ini

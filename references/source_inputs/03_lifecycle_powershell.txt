@@ -1,0 +1,737 @@
+# ========================================
+# Per-Asset Lifecycle File Structure Creator
+# SIMPLIFIED VERSION - No Category Folders
+# ========================================
+# Version: 2.0
+# Purpose: Create ultra-simple continuous lifecycle folder structure
+# Usage: Right-click > Run with PowerShell (as Administrator)
+
+# Configuration
+$RootPath = "C:\AssetManagement"  # Change this to your file server path
+# Example: "\\FileServer\Share\AssetManagement"
+
+# Color coding for output
+function Write-ColorOutput($ForegroundColor) {
+    $fc = $host.UI.RawUI.ForegroundColor
+    $host.UI.RawUI.ForegroundColor = $ForegroundColor
+    if ($args) {
+        Write-Output $args
+    }
+    $host.UI.RawUI.ForegroundColor = $fc
+}
+
+Write-Host "========================================================" -ForegroundColor Cyan
+Write-Host "  Per-Asset Lifecycle File Structure Creator v2.0" -ForegroundColor Cyan
+Write-Host "  SIMPLIFIED: No category folders, no movement!" -ForegroundColor Cyan
+Write-Host "========================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Verify root path
+Write-Host "Target Location: $RootPath" -ForegroundColor Yellow
+$confirmation = Read-Host "Is this correct? (Y/N)"
+if ($confirmation -ne 'Y' -and $confirmation -ne 'y') {
+    Write-Host "Operation cancelled. Please edit the script and update `$RootPath variable." -ForegroundColor Red
+    exit
+}
+
+# Create root directory if it doesn't exist
+if (-not (Test-Path $RootPath)) {
+    Write-Host "Creating root directory..." -ForegroundColor Green
+    New-Item -ItemType Directory -Path $RootPath | Out-Null
+}
+
+# ========================================
+# LEVEL 1: Main Structure (Simplified)
+# ========================================
+Write-Host "`nCreating Level 1 structure..." -ForegroundColor Green
+
+$Level1Folders = @(
+    "ASSETS",
+    "CORPORATE",
+    "TEMPLATES",
+    "ARCHIVE"
+)
+
+foreach ($folder in $Level1Folders) {
+    $path = Join-Path $RootPath $folder
+    if (-not (Test-Path $path)) {
+        New-Item -ItemType Directory -Path $path | Out-Null
+        Write-Host "  ✓ Created: $folder" -ForegroundColor Gray
+    }
+}
+
+Write-Host "`n  NOTE: ASSETS folder contains ALL assets in one place" -ForegroundColor Yellow
+Write-Host "  No sub-categorization by type or status - ultra simple!" -ForegroundColor Yellow
+
+# ========================================
+# LEVEL 2: Corporate Structure
+# ========================================
+Write-Host "`nCreating Corporate folders..." -ForegroundColor Green
+
+$CorpPath = Join-Path $RootPath "CORPORATE"
+$CorpDepts = @{
+    "FINANCE" = @("Consolidated_Reports", "Tax_Corporate", "Audit_Records", "Treasury")
+    "HR" = @("Org_Charts", "Policies", "Training", "Recruitment")
+    "LEGAL" = @("Corporate_Governance", "Insurance_Corporate", "Master_Agreements", "Compliance")
+    "STRATEGY" = @("Business_Plans", "Market_Research", "Board_Materials", "Investor_Relations")
+    "IT_SYSTEMS" = @("Documentation", "Procedures", "Licenses", "Support")
+}
+
+foreach ($dept in $CorpDepts.Keys) {
+    $deptPath = Join-Path $CorpPath $dept
+    New-Item -ItemType Directory -Path $deptPath -Force | Out-Null
+    
+    foreach ($subfolder in $CorpDepts[$dept]) {
+        $subPath = Join-Path $deptPath $subfolder
+        New-Item -ItemType Directory -Path $subPath -Force | Out-Null
+    }
+    Write-Host "  ✓ Created: $dept with subfolders" -ForegroundColor Gray
+}
+
+# ========================================
+# LEVEL 2: Archive Structure (Simplified)
+# ========================================
+Write-Host "`nCreating Archive structure..." -ForegroundColor Green
+
+$ArchivePath = Join-Path $RootPath "ARCHIVE"
+$currentYear = Get-Date -Format "yyyy"
+$years = @($currentYear, ([int]$currentYear - 1).ToString(), ([int]$currentYear - 2).ToString())
+
+foreach ($year in $years) {
+    $yearPath = Join-Path $ArchivePath $year
+    New-Item -ItemType Directory -Path $yearPath -Force | Out-Null
+    Write-Host "  ✓ Created: Archive year $year" -ForegroundColor Gray
+}
+
+Write-Host "`n  NOTE: Archive contains assets by year only" -ForegroundColor Yellow
+Write-Host "  Folder names indicate why archived: [SOLD], [CANCELLED], [DECOMMISSIONED]" -ForegroundColor Yellow
+
+# ========================================
+# TEMPLATES STRUCTURE
+# ========================================
+Write-Host "`nCreating Templates structure..." -ForegroundColor Green
+
+$TemplatePath = Join-Path $RootPath "TEMPLATES"
+
+# Template folders
+$TemplateFolders = @(
+    "ASSET_LIFECYCLE_TEMPLATE",
+    "DOCUMENT_TEMPLATES",
+    "SYSTEM_DOCUMENTATION",
+    "FORMS_CHECKLISTS",
+    "EXCEL_TEMPLATES"
+)
+
+foreach ($folder in $TemplateFolders) {
+    $path = Join-Path $TemplatePath $folder
+    New-Item -ItemType Directory -Path $path -Force | Out-Null
+    Write-Host "  ✓ Created: $folder" -ForegroundColor Gray
+}
+
+# ========================================
+# ASSET LIFECYCLE TEMPLATE: Complete Structure
+# ========================================
+Write-Host "`nCreating comprehensive Asset Lifecycle Template..." -ForegroundColor Green
+
+$AssetTemplatePath = Join-Path $TemplatePath "ASSET_LIFECYCLE_TEMPLATE"
+
+# Complete lifecycle structure for each asset
+$LifecycleStructure = @{
+    "00_ASSET_MASTER" = @(
+        "Asset_Summary_Sheet",
+        "Key_Contacts_Directory",
+        "Timeline_Milestones",
+        "Quick_Financial_Summary",
+        "Document_Index"
+    )
+    "01_PREFEASIBILITY" = @(
+        "Site_Identification",
+        "Preliminary_Assessment",
+        "Market_Overview",
+        "Go_No-Go_Decision"
+    )
+    "02_FEASIBILITY" = @(
+        "Site_Assessment",
+        "Technical_Feasibility",
+        "Market_Analysis",
+        "Financial_Model_Development",
+        "Risk_Assessment",
+        "Feasibility_Report"
+    )
+    "03_LAND_ACQUISITION" = @(
+        "Title_Search_Due_Diligence",
+        "Negotiations",
+        "Contracts_Agreements",
+        "Surveys_Maps",
+        "Legal_Documentation"
+    )
+    "04_PERMITTING" = @(
+        "Environmental_Permits",
+        "Building_Construction_Permits",
+        "Grid_Connection_Permits",
+        "Operating_Licenses",
+        "Authority_Correspondence",
+        "Permit_Register"
+    )
+    "05_DESIGN_ENGINEERING" = @(
+        "Electrical_Design",
+        "Civil_Structural",
+        "Mechanical_HVAC",
+        "Technical_Specifications",
+        "Design_Reviews",
+        "As_Designed_Drawings"
+    )
+    "06_FINANCING" = @(
+        "Financing_Strategy",
+        "Lender_Documentation",
+        "Term_Sheets",
+        "Financial_Close_Documents",
+        "Sponsor_Equity",
+        "Financial_Model_Final"
+    )
+    "07_PROCUREMENT" = @(
+        "Procurement_Strategy",
+        "RFQ_RFP_Documents",
+        "Bids_Proposals",
+        "Technical_Evaluations",
+        "Commercial_Evaluations",
+        "Contracts_Awarded",
+        "Purchase_Orders"
+    )
+    "08_CONSTRUCTION" = @(
+        "Construction_Schedule",
+        "Progress_Reports",
+        "Site_Documentation",
+        "QA_QC",
+        "Safety_HSE",
+        "Change_Orders",
+        "As_Built_Drawings"
+    )
+    "09_COMMISSIONING_COD" = @(
+        "Commissioning_Plan",
+        "Test_Procedures",
+        "Test_Reports",
+        "Punch_List",
+        "Completion_Certificates",
+        "COD_Documentation",
+        "Warranty_Certificates",
+        "O&M_Manuals",
+        "Training_Materials"
+    )
+    "10_OPERATIONS" = @(
+        "Asset_Information",
+        "Maintenance_Strategy",
+        "Performance_Monitoring",
+        "Compliance_Regulatory"
+    )
+    "11_CONTRACTS_LEGAL" = @(
+        "Development_Phase",
+        "Construction_Phase",
+        "Operations_Phase",
+        "Financing_Agreements",
+        "Contract_Register"
+    )
+    "12_FINANCIAL" = @(
+        "Development_Phase",
+        "Construction_Phase",
+        "Operations_Phase",
+        "Financial_Models",
+        "Tax_Accounting",
+        "Audit_Documents"
+    )
+    "13_CORRESPONDENCE" = @(
+        "Development_Phase",
+        "Construction_Phase",
+        "Operations_Phase",
+        "Meeting_Minutes"
+    )
+    "14_DECOMMISSIONING" = @(
+        "Decommissioning_Plan",
+        "Environmental_Restoration",
+        "Equipment_Disposal",
+        "Site_Closure"
+    )
+}
+
+# Create main lifecycle structure
+foreach ($phase in $LifecycleStructure.Keys) {
+    $phasePath = Join-Path $AssetTemplatePath $phase
+    New-Item -ItemType Directory -Path $phasePath -Force | Out-Null
+    
+    foreach ($subfolder in $LifecycleStructure[$phase]) {
+        $subPath = Join-Path $phasePath $subfolder
+        New-Item -ItemType Directory -Path $subPath -Force | Out-Null
+    }
+}
+
+Write-Host "  ✓ Created: Asset Lifecycle Template with 14 phases" -ForegroundColor Gray
+
+# ========================================
+# DETAILED SUBFOLDERS (Key Ones)
+# ========================================
+Write-Host "`nCreating detailed subfolders in template..." -ForegroundColor Green
+
+# Key subfolders
+$detailedStructure = @{
+    "04_PERMITTING\Environmental_Permits" = @("EIA_Studies", "Applications", "Approvals")
+    "05_DESIGN_ENGINEERING\Electrical_Design" = @("Single_Line_Diagrams", "Layout_Plans", "Calculations")
+    "05_DESIGN_ENGINEERING\Civil_Structural" = @("Foundation_Design", "Roads_Access", "Drainage")
+    "08_CONSTRUCTION\Progress_Reports" = @("Weekly", "Monthly")
+    "08_CONSTRUCTION\Site_Documentation" = @("Photos", "Videos", "Site_Diaries")
+    "08_CONSTRUCTION\QA_QC" = @("Inspection_Reports", "Test_Results", "NCR_Corrective_Actions")
+    "08_CONSTRUCTION\Safety_HSE" = @("Safety_Plans", "Incident_Reports", "Safety_Meetings")
+    "09_COMMISSIONING_COD\Test_Reports" = @("String_Testing", "System_Testing", "Performance_Testing")
+    "10_OPERATIONS\Asset_Information" = @("As_Built_Drawings", "Equipment_Manuals", "Asset_Register", "System_Diagrams")
+    "10_OPERATIONS\Maintenance_Strategy" = @("Preventive_Maintenance_Plans", "Maintenance_Procedures", "Spare_Parts_Strategy")
+    "10_OPERATIONS\Performance_Monitoring" = @("KPI_Tracking", "Availability_Analysis", "Performance_Ratio", "Benchmarking")
+    "10_OPERATIONS\Compliance_Regulatory" = @("Environmental_Monitoring", "Safety_Audits", "Regulatory_Reporting", "Inspection_Visits")
+    "11_CONTRACTS_LEGAL\Development_Phase" = @("Land_Agreements", "Development_Agreements", "Consultant_Contracts")
+    "11_CONTRACTS_LEGAL\Construction_Phase" = @("EPC_Contract", "Equipment_Supply_Contracts", "Construction_Insurance")
+    "11_CONTRACTS_LEGAL\Operations_Phase" = @("O&M_Contract", "PPA_Offtake_Agreement", "Service_Agreements", "Operations_Insurance")
+    "11_CONTRACTS_LEGAL\Financing_Agreements" = @("Loan_Agreements", "Equity_Agreements", "Security_Documents")
+    "12_FINANCIAL\Development_Phase" = @("Development_Budget", "Capex_Tracking", "Development_Invoices", "Payment_Certificates")
+    "12_FINANCIAL\Construction_Phase" = @("Construction_Budget", "Cash_Flow_Projections", "Construction_Invoices", "Draw_Requests", "Cost_Reports")
+    "12_FINANCIAL\Operations_Phase" = @("Operating_Budget", "Revenue", "OPEX", "Capital_Improvements", "Annual_Financial_Statements")
+    "13_CORRESPONDENCE\Meeting_Minutes" = @("Project_Meetings", "Technical_Meetings", "Stakeholder_Meetings")
+}
+
+foreach ($path in $detailedStructure.Keys) {
+    $fullPath = Join-Path $AssetTemplatePath $path
+    foreach ($sub in $detailedStructure[$path]) {
+        New-Item -ItemType Directory -Path (Join-Path $fullPath $sub) -Force | Out-Null
+    }
+}
+
+# Financial subfolders
+$revenueOPEX = @{
+    "12_FINANCIAL\Operations_Phase\Revenue" = @("Production_Revenue", "Invoices_to_Offtaker")
+    "12_FINANCIAL\Operations_Phase\OPEX" = @("O&M_Costs", "Insurance", "Land_Lease", "Other_Operating_Costs")
+}
+
+foreach ($path in $revenueOPEX.Keys) {
+    $fullPath = Join-Path $AssetTemplatePath $path
+    foreach ($sub in $revenueOPEX[$path]) {
+        New-Item -ItemType Directory -Path (Join-Path $fullPath $sub) -Force | Out-Null
+    }
+}
+
+Write-Host "  ✓ Created: Detailed subfolder structure" -ForegroundColor Gray
+
+# ========================================
+# CREATE CSV TEMPLATES IN EXCEL_TEMPLATES
+# ========================================
+Write-Host "`nCreating CSV template files..." -ForegroundColor Green
+
+$ExcelTemplatesPath = Join-Path $TemplatePath "EXCEL_TEMPLATES"
+
+# Asset Summary Sheet Template
+$assetSummaryCsv = @"
+Section,Field,Value,Notes,Last_Updated,Updated_By
+Basic Information,Asset ID,AEN_PV025,Unique identifier,2023-01-05,System
+Basic Information,Asset Name,Sunfield Solar Park,Project name,2023-01-05,System
+Basic Information,Subcompany,AEN - Alpha Energy,Operating entity,2023-01-05,System
+Basic Information,Location,"Athens, Attica, Greece",Geographic location,2023-01-05,System
+Basic Information,GPS Coordinates,"37.9838° N, 23.7275° E",Site coordinates,2023-01-05,System
+Basic Information,Technology/Type,Ground-mounted Solar PV with tracking,Technology description,2023-01-05,System
+Basic Information,Capacity/Size,50 MWp DC / 45 MW AC,Nameplate capacity,2023-01-05,System
+Basic Information,Land Area,85 hectares,Total site area,2023-01-05,System
+Basic Information,Current Status,OPERATIONAL,Project phase,2026-01-01,System
+Basic Information,Status Last Updated,2026-01-01,When status changed,2026-01-01,System
+
+Timeline & Milestones,Project Initiation,2023-01-05,Kickoff date,2023-01-05,John Smith
+Timeline & Milestones,Feasibility Approval,2023-08-15,Board approval,2023-08-15,John Smith
+Timeline & Milestones,Land Secured,2024-01-20,Lease signed,2024-01-20,John Smith
+Timeline & Milestones,Environmental Permit,2024-06-20,EIA approved,2024-06-20,John Smith
+Timeline & Milestones,Building Permit,2024-08-15,Construction permit,2024-08-15,John Smith
+Timeline & Milestones,Grid Connection Approval,2024-09-20,Grid operator approval,2024-09-20,John Smith
+Timeline & Milestones,Financial Close,2024-12-15,Financing secured,2024-12-15,John Smith
+Timeline & Milestones,Construction Start,2025-01-15,NTP issued,2025-01-15,John Smith
+Timeline & Milestones,Mechanical Completion,2025-11-30,Construction complete,2025-11-30,John Smith
+Timeline & Milestones,Commissioning Start,2025-12-01,Testing begins,2025-12-01,Maria Lopez
+Timeline & Milestones,Commercial Operation Date (COD),2025-12-31,First day of operations,2025-12-31,Maria Lopez
+
+Financial Summary - Development,Development Budget,€8500000,Pre-construction costs,2023-01-05,Sarah Johnson
+Financial Summary - Development,Feasibility Studies,€450000,Technical and market studies,2023-08-15,Sarah Johnson
+Financial Summary - Development,Land Acquisition,€1200000,Lease deposits and legal,2024-01-20,Sarah Johnson
+Financial Summary - Development,Permitting Costs,€850000,EIA consultants and fees,2024-08-15,Sarah Johnson
+Financial Summary - Development,Design Engineering,€1500000,Detailed design,2024-10-01,Sarah Johnson
+Financial Summary - Development,Development Management,€1200000,Internal costs and PMC,2024-12-15,Sarah Johnson
+Financial Summary - Development,Legal and Advisory,€800000,Legal fees and advisors,2024-12-15,Sarah Johnson
+Financial Summary - Development,Financing Fees,€1500000,Arrangement and due diligence,2024-12-15,Sarah Johnson
+Financial Summary - Development,Other Development Costs,€1000000,Contingency and misc,2024-12-15,Sarah Johnson
+
+Financial Summary - Construction,Total Construction Cost (CAPEX),€45000000,EPC and equipment,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Solar Modules,€12000000,100000 x 500W bifacial,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Inverters,€3500000,25 x 2.0 MW central,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Mounting & Tracking,€4200000,Single-axis trackers,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Electrical BOP,€2800000,MV switchgear and cables,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Civil Works,€3200000,Foundations and roads,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Grid Connection,€2500000,Substation 150kV,2025-12-31,Sarah Johnson
+Financial Summary - Construction,SCADA & Monitoring,€450000,Control systems,2025-12-31,Sarah Johnson
+Financial Summary - Construction,EPC Labor & Management,€12000000,Construction management,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Commissioning,€380000,Testing services,2025-12-31,Sarah Johnson
+Financial Summary - Construction,Other Construction,€1970000,Security insurance etc,2025-12-31,Sarah Johnson
+
+Financial Summary - Totals,Total Project Cost,€53500000,Development + Construction,2025-12-31,Sarah Johnson
+Financial Summary - Totals,Debt Financing,€38000000,Senior debt 71%,2024-12-15,Sarah Johnson
+Financial Summary - Totals,Equity Financing,€15500000,Sponsor equity 29%,2024-12-15,Sarah Johnson
+Financial Summary - Totals,Debt Service Reserve,€2500000,6 months DSRA,2024-12-15,Sarah Johnson
+Financial Summary - Totals,Interest During Construction,€730000,IDC capitalized,2025-12-31,Sarah Johnson
+
+Financial Summary - Operations,Annual OPEX Budget,€750000,Year 1 operating costs,2026-01-01,Maria Lopez
+Financial Summary - Operations,O&M Contract (Annual),€450000,Fixed O&M fee,2026-01-01,Maria Lopez
+Financial Summary - Operations,Insurance (Annual),€120000,All-risk policy,2026-01-01,Maria Lopez
+Financial Summary - Operations,Land Lease (Annual),€85000,Lease payment,2026-01-01,Maria Lopez
+Financial Summary - Operations,Asset Management,€45000,Internal management,2026-01-01,Maria Lopez
+Financial Summary - Operations,Other Operating Costs,€50000,Miscellaneous,2026-01-01,Maria Lopez
+Financial Summary - Operations,Annual Revenue (Estimated),€4200000,Based on PPA,2026-01-01,Maria Lopez
+Financial Summary - Operations,PPA Rate,€52/MWh,Fixed 20 years,2025-12-31,Sarah Johnson
+Financial Summary - Operations,PPA Counterparty,National Grid Operator,Offtaker,2025-12-31,Sarah Johnson
+Financial Summary - Operations,PPA Term,20 years from COD,Until 2045,2025-12-31,Sarah Johnson
+
+Technical Summary - Solar Array,Solar Modules,100000 × 500W bifacial,Total module count,2025-12-31,John Smith
+Technical Summary - Solar Array,Module Manufacturer,Module Supplier Inc,Tier 1 supplier,2025-12-31,John Smith
+Technical Summary - Solar Array,Module Technology,Monocrystalline bifacial PERC,Cell technology,2025-12-31,John Smith
+Technical Summary - Solar Array,Module Efficiency,21.2%,At STC,2025-12-31,John Smith
+Technical Summary - Solar Array,Total DC Capacity,50 MWp,Nameplate DC,2025-12-31,John Smith
+Technical Summary - Solar Array,Module Warranty,12 years product / 25 years performance,Warranty terms,2025-12-31,John Smith
+Technical Summary - Solar Array,Performance Guarantee,"Year 1: 97.5%, Year 25: 84.8%",Linear degradation,2025-12-31,John Smith
+
+Technical Summary - Inverters,Inverters,25 × 2.0 MW central inverters,Total inverter count,2025-12-31,John Smith
+Technical Summary - Inverters,Inverter Manufacturer,Inverter Tech GmbH,European supplier,2025-12-31,John Smith
+Technical Summary - Inverters,Total AC Capacity,45 MW AC,Nameplate AC,2025-12-31,John Smith
+Technical Summary - Inverters,DC/AC Ratio,1.11,Oversizing ratio,2025-12-31,John Smith
+Technical Summary - Inverters,Inverter Efficiency,98.7%,Peak efficiency,2025-12-31,John Smith
+Technical Summary - Inverters,Inverter Warranty,5 years standard + 5 years extended,Total 10 years,2025-12-31,John Smith
+
+Technical Summary - Mounting,Mounting System,Single-axis tracking system,Horizontal single-axis,2025-12-31,John Smith
+Technical Summary - Mounting,Tracker Manufacturer,Tracker Solutions SA,Spanish supplier,2025-12-31,John Smith
+Technical Summary - Mounting,Tracker Configuration,120 modules per tracker,2 strings per tracker,2025-12-31,John Smith
+Technical Summary - Mounting,Tracking Range,+/- 60 degrees,East-west tracking,2025-12-31,John Smith
+Technical Summary - Mounting,Tracker Warranty,5 years structural / 3 years motors,Warranty terms,2025-12-31,John Smith
+Technical Summary - Mounting,Wind Design,145 km/h sustained wind,Survival mode,2025-12-31,John Smith
+
+Technical Summary - Grid,Grid Connection,150kV substation,New substation built,2025-12-31,John Smith
+Technical Summary - Grid,Grid Connection Distance,2.5 km,Transmission line length,2025-12-31,John Smith
+Technical Summary - Grid,Transformers,25 × 2.0 MVA,One per inverter,2025-12-31,John Smith
+Technical Summary - Grid,MV Voltage,33 kV,Medium voltage collection,2025-12-31,John Smith
+Technical Summary - Grid,Main Transformer,50 MVA 33/150kV,Substation transformer,2025-12-31,John Smith
+Technical Summary - Grid,Grid Code Compliance,Greek Grid Code 2020,Compliance standard,2025-12-31,John Smith
+
+Technical Summary - Site,Land Area,85 hectares,Total leased area,2024-01-20,John Smith
+Technical Summary - Site,Fenced Area,78 hectares,Security perimeter,2025-11-30,John Smith
+Technical Summary - Site,Site Access,Paved road 2.5 km,Access from main highway,2025-11-30,John Smith
+Technical Summary - Site,Elevation,120 meters above sea level,Site elevation,2023-01-05,John Smith
+Technical Summary - Site,Slope,< 5 degrees,Generally flat terrain,2023-01-05,John Smith
+Technical Summary - Site,Soil Type,Sandy loam,Geotechnical,2023-04-10,John Smith
+Technical Summary - Site,Seismic Zone,Zone II,Low seismic risk,2023-04-10,John Smith
+
+Technical Summary - Performance,Annual Production (Expected),85000 MWh,P50 estimate,2025-12-31,John Smith
+Technical Summary - Performance,Annual Production (P90),78000 MWh,Conservative estimate,2025-12-31,John Smith
+Technical Summary - Performance,Specific Yield,1700 kWh/kWp,Annual specific yield,2025-12-31,John Smith
+Technical Summary - Performance,Performance Ratio Target,>85%,Contractual guarantee,2025-12-31,John Smith
+Technical Summary - Performance,Availability Target,>99%,System availability,2025-12-31,Maria Lopez
+Technical Summary - Performance,Capacity Factor,19.4%,Annual capacity factor,2025-12-31,John Smith
+Technical Summary - Performance,First Year Degradation,2%,Module degradation,2025-12-31,John Smith
+Technical Summary - Performance,Annual Degradation,0.55%,Linear degradation,2025-12-31,John Smith
+
+Key Contacts - Team,Development PM,John Smith,john.smith@alphaenergy.com,+30 210 1234567,Primary development contact,2023-01-05
+Key Contacts - Team,O&M PM,Maria Lopez,maria.lopez@alphaenergy.com,+30 210 1234568,Operations manager,2025-12-31,John Smith
+Key Contacts - Team,Finance Director,Sarah Johnson,sarah.johnson@alphaenergy.com,+30 210 1234565,Financial oversight,2023-01-05,System
+Key Contacts - Team,CEO,Michael Anderson,michael.anderson@alphaenergy.com,+30 210 1234560,Executive approval,2023-01-05,System
+Key Contacts - Team,Legal Counsel,David Williams,david.williams@alphaenergy.com,+30 210 1234566,Legal matters,2023-01-05,System
+
+Key Contacts - Partners,EPC Contractor,EPC Contractor Ltd,George Papadopoulos,project@epccontractor.com,+30 210 9876543,Main contractor,2024-12-20
+Key Contacts - Partners,O&M Contractor,O&M Services SA,Elena Dimitriou,operations@omservices.gr,+30 210 8765432,Operations contractor,2025-12-20,John Smith
+Key Contacts - Partners,Module Supplier,Module Supplier Inc,John Davis,support@modulesupplier.com,+1-555-0100,Equipment supplier,2024-11-15,John Smith
+Key Contacts - Partners,Inverter Supplier,Inverter Tech GmbH,Hans Mueller,service@invertertech.de,+49-123-456789,Equipment supplier,2024-11-10,John Smith
+Key Contacts - Partners,Tracker Supplier,Tracker Solutions SA,Carlos Rodriguez,warranty@trackersolutions.es,+34-91-1234567,Equipment supplier,2024-11-12,John Smith
+Key Contacts - Partners,Environmental Consultant,Green Earth Consultants,Dr. Maria Kostas,maria@greenearthconsult.gr,+30 210 5554433,EIA consultant,2023-04-05,John Smith
+Key Contacts - Partners,Technical Consultant,Solar Tech Advisors,Dr. Andreas Petrou,andreas@solartechadvisors.com,+30 210 6667788,Independent engineer,2023-05-15,John Smith
+Key Contacts - Partners,Legal Advisor,Law Firm Partners LLP,Sofia Georgiou,sofia@lawfirmpartners.gr,+30 210 3334455,Legal counsel,2023-03-01,David Williams
+Key Contacts - Partners,Lender,National Bank of Greece,Konstantinos Makris,k.makris@nbg.gr,+30 210 2223344,Senior lender,2024-12-15,Sarah Johnson
+Key Contacts - Partners,Insurance Broker,Insurance Partners SA,Dimitris Nikolaidis,dimitris@insurancepartners.gr,+30 210 4445566,Insurance broker,2024-12-01,Sarah Johnson
+
+Key Contacts - Authorities,Grid Operator,National Grid Operator,Ioannis Stavrou,commercial@gridoperator.gr,+30 210 5555555,Grid connection,2024-09-20,John Smith
+Key Contacts - Authorities,Environmental Authority,Ministry of Environment,Dr. Christina Pappa,c.pappa@environment.gov.gr,+30 210 6666666,Environmental permits,2024-06-20,John Smith
+Key Contacts - Authorities,Building Authority,Municipality of Athens,Nikos Dimitriou,n.dimitriou@athens.gr,+30 210 7777777,Building permits,2024-08-15,John Smith
+Key Contacts - Authorities,Energy Regulator,Regulatory Authority for Energy,Maria Antoniou,m.antoniou@rae.gr,+30 210 8888888,Operating license,2024-11-15,John Smith
+Key Contacts - Authorities,Fire Department,Athens Fire Department,Captain Giorgos Kostas,fire@athens-fire.gr,+30 210 9999999,Fire safety cert,2025-11-20,John Smith
+
+Document References,Feasibility Study,02_FEASIBILITY\Feasibility_Report\,Final report location,2023-07-30,John Smith
+Document References,All Permits,04_PERMITTING\Permit_Register\,Permit register,2024-11-15,John Smith
+Document References,As-Built Drawings,08_CONSTRUCTION\As_Built_Drawings\,Final drawings,2025-11-15,John Smith
+Document References,O&M Manuals,09_COMMISSIONING_COD\O&M_Manuals\,Equipment manuals,2025-12-20,Maria Lopez
+Document References,EPC Contract,11_CONTRACTS_LEGAL\Construction_Phase\EPC_Contract\,Main contract,2024-12-20,David Williams
+Document References,O&M Contract,11_CONTRACTS_LEGAL\Operations_Phase\O&M_Contract\,O&M agreement,2025-12-20,David Williams
+Document References,PPA,11_CONTRACTS_LEGAL\Operations_Phase\PPA_Offtake_Agreement\,Power purchase agreement,2025-12-31,David Williams
+Document References,Financial Model,12_FINANCIAL\Financial_Models\,All model versions,2025-12-31,Sarah Johnson
+Document References,Operations Reports,10_OPERATIONS\YEAR_2026\[Month]\Reports\,Monthly reports,2026-01-01,Maria Lopez
+Document References,Asset Register,10_OPERATIONS\Asset_Information\Asset_Register\,Equipment inventory,2026-01-01,Maria Lopez
+"@
+Set-Content -Path "$ExcelTemplatesPath\Asset_Summary_Sheet_Template.csv" -Value $assetSummaryCsv
+
+# Construction Budget Tracker Template
+$budgetCsv = @"
+Cost_Code,Cost_Category,Description,Budget_EUR,Actual_Spent_EUR,Committed_EUR,Forecast_to_Complete_EUR,Total_Forecast_EUR,Variance_EUR,Variance_Pct,Pct_Complete,Status,PO_Number,Vendor,Contract_Date,Payment_Terms,Currency,FX_Rate,Budget_EUR_Original,Notes,Budget_Approved_By,Budget_Approved_Date,Last_Updated,Updated_By
+01.001,EPC Contract,Main EPC Contract - Turnkey,30000000,27500000,1800000,700000,30000000,0,0.0%,92%,On Track,PO-2024-001,EPC Contractor Ltd,2024-12-20,Monthly progress payments,EUR,1.00,30000000,Lump sum turnkey,Sarah Johnson,2024-11-15,2025-11-30,Maria Lopez
+02.001,Solar Modules,Bifacial PV modules 100000 units,12000000,12000000,0,0,12000000,0,0.0%,100%,Complete,PO-2024-002,Module Supplier Inc,2024-11-15,30% prepay 70% delivery,USD,0.92,13043478,All modules delivered,John Smith,2024-10-01,2025-06-30,John Smith
+02.002,Solar Modules,Module freight and logistics,480000,480000,0,0,480000,0,0.0%,100%,Complete,PO-2024-002A,Logistics Provider,2024-11-20,Net 30,EUR,1.00,480000,CIF Athens port,John Smith,2024-10-01,2025-06-30,John Smith
+03.001,Inverters,Central inverters 25 units × 2.0 MW,3500000,3500000,0,0,3500000,0,0.0%,100%,Complete,PO-2024-003,Inverter Tech GmbH,2024-11-10,30% prepay 70% delivery,EUR,1.00,3500000,All inverters installed,John Smith,2024-10-01,2025-08-15,John Smith
+03.002,Inverters,Inverter extended warranty 5 years,175000,175000,0,0,175000,0,0.0%,100%,Complete,PO-2024-003A,Inverter Tech GmbH,2024-11-10,Prepayment,EUR,1.00,175000,Warranty year 6-10,Sarah Johnson,2024-10-01,2025-08-15,John Smith
+04.001,Mounting System,Single-axis tracking system complete,4200000,4100000,0,0,4100000,100000,-2.4%,100%,Complete,PO-2024-004,Tracker Solutions SA,2024-11-12,Progress payments,EUR,1.00,4200000,Savings on installation,John Smith,2024-10-01,2025-09-30,John Smith
+04.002,Mounting System,Tracker spare parts kit,85000,85000,0,0,85000,0,0.0%,100%,Complete,PO-2024-004A,Tracker Solutions SA,2024-11-12,Net 30,EUR,1.00,85000,Initial spare parts,Maria Lopez,2024-10-01,2025-09-30,Maria Lopez
+05.001,Electrical BOP,MV switchgear 33kV,850000,820000,15000,15000,850000,0,0.0%,96%,On Track,PO-2024-005A,Electrical Supplies Ltd,2024-12-01,Progress payments,EUR,1.00,850000,Final testing pending,John Smith,2024-10-01,2025-11-20,John Smith
+05.002,Electrical BOP,Transformers 25 × 2.0 MVA,1200000,1180000,20000,0,1200000,0,0.0%,98%,On Track,PO-2024-005B,Electrical Supplies Ltd,2024-12-01,Progress payments,EUR,1.00,1200000,Final commissioning,John Smith,2024-10-01,2025-11-20,John Smith
+05.003,Electrical BOP,MV cables and accessories,550000,530000,20000,0,550000,0,0.0%,96%,On Track,PO-2024-005C,Electrical Supplies Ltd,2024-12-01,Net 30,EUR,1.00,550000,Installation ongoing,John Smith,2024-10-01,2025-11-20,John Smith
+05.004,Electrical BOP,LV cables and combiner boxes,200000,120000,40000,40000,200000,0,0.0%,60%,On Track,PO-2024-005D,Electrical Supplies Ltd,2024-12-01,Net 30,EUR,1.00,200000,Installation in progress,John Smith,2024-10-01,2025-11-20,John Smith
+06.001,Civil Works,Site preparation and grading,450000,445000,0,0,445000,5000,-1.1%,100%,Complete,PO-2024-006A,Civil Contractors SA,2024-12-05,Progress payments,EUR,1.00,450000,Minor savings,John Smith,2024-10-01,2025-03-15,John Smith
+06.002,Civil Works,Foundation works - piles and concrete,1850000,1820000,0,0,1820000,30000,-1.6%,100%,Complete,PO-2024-006B,Civil Contractors SA,2024-12-05,Progress payments,EUR,1.00,1850000,Optimized design,John Smith,2024-10-01,2025-07-31,John Smith
+06.003,Civil Works,Internal roads and drainage,520000,515000,5000,0,520000,0,0.0%,99%,On Track,PO-2024-006C,Civil Contractors SA,2024-12-05,Progress payments,EUR,1.00,520000,Final touches,John Smith,2024-10-01,2025-11-20,John Smith
+06.004,Civil Works,Buildings - control room and warehouse,280000,270000,10000,0,280000,0,0.0%,96%,On Track,PO-2024-006D,Civil Contractors SA,2024-12-05,Progress payments,EUR,1.00,280000,Finishing work,John Smith,2024-10-01,2025-11-15,John Smith
+06.005,Civil Works,Fencing and gates,100000,50000,25000,25000,100000,0,0.0%,50%,On Track,PO-2024-006E,Security Systems SA,2024-12-08,50% upfront 50% complete,EUR,1.00,100000,Installation in progress,John Smith,2024-10-01,2025-11-25,John Smith
+07.001,Grid Connection,150kV substation construction,1850000,1920000,0,0,1920000,-70000,3.8%,100%,Over Budget,PO-2024-007A,Grid Solutions Ltd,2024-11-05,Milestone payments,EUR,1.00,1850000,Extra grounding work,John Smith,2024-10-01,2025-10-31,John Smith
+07.002,Grid Connection,Transmission line 2.5km to grid,450000,480000,0,0,480000,-30000,6.7%,100%,Over Budget,PO-2024-007B,Grid Solutions Ltd,2024-11-05,Milestone payments,EUR,1.00,450000,Terrain difficulties,John Smith,2024-10-01,2025-10-31,John Smith
+07.003,Grid Connection,Grid connection fees,200000,200000,0,0,200000,0,0.0%,100%,Complete,Direct,National Grid Operator,2024-09-20,Prepayment,EUR,1.00,200000,Regulatory fees,Sarah Johnson,2024-09-01,2024-09-20,Sarah Johnson
+08.001,SCADA & Monitoring,SCADA system hardware and software,320000,300000,15000,5000,320000,0,0.0%,94%,On Track,PO-2024-008A,SCADA Systems Inc,2024-11-20,50% upfront 50% commission,USD,0.92,347826,System integration,John Smith,2024-10-01,2025-11-28,John Smith
+08.002,SCADA & Monitoring,Weather stations 2 units,45000,42000,0,0,42000,3000,-6.7%,100%,Complete,PO-2024-008B,Meteo Equipment Ltd,2024-11-22,Prepayment,EUR,1.00,45000,Minor savings,John Smith,2024-10-01,2025-08-15,John Smith
+08.003,SCADA & Monitoring,Communication infrastructure,85000,78000,5000,2000,85000,0,0.0%,92%,On Track,PO-2024-008C,Telecom Provider,2024-11-25,Net 30,EUR,1.00,85000,Fiber optic and 4G,John Smith,2024-10-01,2025-11-28,John Smith
+09.001,Commissioning,Independent commissioning agent,185000,140000,30000,15000,185000,0,0.0%,76%,On Track,PO-2024-009A,Commissioning Services Ltd,2024-12-10,Time and materials,EUR,1.00,185000,Testing in progress,John Smith,2024-11-01,2025-12-20,Maria Lopez
+09.002,Commissioning,Performance testing,95000,70000,20000,5000,95000,0,0.0%,74%,On Track,PO-2024-009B,Solar Tech Advisors,2024-12-10,Milestone based,EUR,1.00,95000,PR test scheduled,John Smith,2024-11-01,2025-12-18,Maria Lopez
+09.003,Commissioning,Grid synchronization and testing,100000,70000,30000,0,100000,0,0.0%,70%,On Track,Direct,National Grid Operator,2024-12-15,Per regulation,EUR,1.00,100000,Final grid tests,John Smith,2024-11-01,2025-12-20,Maria Lopez
+10.001,Security & Safety,Perimeter security system - cameras,180000,175000,0,0,175000,5000,-2.8%,100%,Complete,PO-2024-010A,Security Systems SA,2024-12-08,50% upfront 50% complete,EUR,1.00,180000,50 cameras installed,John Smith,2024-10-01,2025-10-31,John Smith
+10.002,Security & Safety,Access control system,75000,72000,0,0,72000,3000,-4.0%,100%,Complete,PO-2024-010B,Security Systems SA,2024-12-08,50% upfront 50% complete,EUR,1.00,75000,Card access system,John Smith,2024-10-01,2025-10-31,John Smith
+10.003,Security & Safety,Fire suppression systems,65000,63000,0,0,63000,2000,-3.1%,100%,Complete,PO-2024-010C,Fire Safety Inc,2024-12-12,Net 30,EUR,1.00,65000,Extinguishers and alarms,John Smith,2024-10-01,2025-11-15,John Smith
+11.001,Project Management,Project management consultant PMC,420000,380000,30000,10000,420000,0,0.0%,90%,On Track,PO-2024-011A,PMC Consultants Ltd,2024-11-01,Monthly retainer,EUR,1.00,420000,Through commissioning,John Smith,2024-10-01,2025-12-20,John Smith
+11.002,Project Management,Owner's engineer,230000,200000,20000,10000,230000,0,0.0%,87%,On Track,PO-2024-011B,Solar Tech Advisors,2024-11-01,Time and materials,EUR,1.00,230000,Technical oversight,John Smith,2024-10-01,2025-12-20,John Smith
+12.001,Insurance,Construction all-risk policy,280000,280000,0,0,280000,0,0.0%,100%,Complete,Policy-2024-001,Insurance Broker SA,2024-12-01,Annual premium,EUR,1.00,280000,€50M coverage,Sarah Johnson,2024-11-01,2024-12-01,Sarah Johnson
+13.001,Legal & Advisory,Legal fees - construction phase,120000,105000,10000,5000,120000,0,0.0%,88%,On Track,Time-based,Law Firm Partners LLP,N/A,Monthly invoicing,EUR,1.00,120000,Contract review ongoing,David Williams,2024-10-01,2025-11-30,David Williams
+13.002,Legal & Advisory,Technical advisory fees,60000,55000,5000,0,60000,0,0.0%,92%,On Track,Time-based,Various Consultants,N/A,Per engagement,EUR,1.00,60000,Multiple engagements,John Smith,2024-10-01,2025-11-30,John Smith
+14.001,Permits & Inspections,Permit fees and applications,55000,55000,0,0,55000,0,0.0%,100%,Complete,Direct,Various Authorities,N/A,Per application,EUR,1.00,55000,All permits obtained,John Smith,2024-08-01,2024-11-15,John Smith
+14.002,Permits & Inspections,Inspection fees,35000,35000,0,0,35000,0,0.0%,100%,Complete,Direct,Various Authorities,N/A,Per inspection,EUR,1.00,35000,Final inspections complete,John Smith,2024-08-01,2025-11-30,Maria Lopez
+15.001,Contingency,Design contingency,800000,0,0,0,0,800000,-100.0%,100%,Unused,N/A,Contingency Reserve,N/A,N/A,EUR,1.00,800000,Closed with savings,John Smith,2024-10-01,2025-11-30,John Smith
+15.002,Contingency,Construction contingency,1200000,450000,3000000,1100000,2550000,-1350000,112.5%,18%,Forecast Over,N/A,Contingency Reserve,N/A,N/A,EUR,1.00,1200000,Overrun on grid connection,Sarah Johnson,2024-10-01,2025-11-30,Sarah Johnson
+16.001,Financing Costs,Interest during construction IDC,730000,710000,0,20000,730000,0,0.0%,97%,On Track,N/A,Bank Lenders,2024-12-15,Monthly,EUR,1.00,730000,Final IDC payment,Sarah Johnson,2024-12-15,2025-11-30,Sarah Johnson
+16.002,Financing Costs,Commitment fees,125000,125000,0,0,125000,0,0.0%,100%,Complete,N/A,Bank Lenders,2024-12-15,Upfront,EUR,1.00,125000,Paid at financial close,Sarah Johnson,2024-12-15,2024-12-15,Sarah Johnson
+16.003,Financing Costs,Letter of credit fees,85000,82000,3000,0,85000,0,0.0%,96%,On Track,N/A,Bank Lenders,2024-12-15,Quarterly,EUR,1.00,85000,Final quarter pending,Sarah Johnson,2024-12-15,2025-11-30,Sarah Johnson
+TOTAL,TOTAL PROJECT,Total Construction Budget,45000000,38250000,5165000,2035000,45450000,-450000,1.0%,85%,At Risk,,,,,EUR,,45000000,Monitor contingency closely,Sarah Johnson,2024-11-15,2025-11-30,Sarah Johnson
+"@
+Set-Content -Path "$ExcelTemplatesPath\Construction_Budget_Tracker_Template.csv" -Value $budgetCsv
+
+# Master Permit Register Template
+$permitCsv = @"
+Permit_ID,Permit_Type,Permit_Name,Permit_Category,Issuing_Authority,Authority_Contact_Person,Authority_Email,Authority_Phone,Application_Date,Approval_Date,Expiry_Date,Duration_Years,Status,Coverage_Details,Renewal_Required,Renewal_Due_Date,Document_Location,Certificate_Number,Conditions_Attached,Compliance_Status,Responsible_Person,Notes,Cost_EUR,Last_Inspection_Date,Next_Inspection_Date,Last_Updated,Updated_By
+PER-001,Environmental,Environmental Impact Assessment Approval,Major Environmental,Ministry of Environment,Dr. Christina Pappa,c.pappa@environment.gov.gr,+30 210 6666666,2024-04-01,2024-06-20,Permanent,Permanent,APPROVED,"EIA approval for 50 MWp solar plant includes: flora/fauna protection biodiversity measures noise limits visual impact mitigation",No,N/A,04_PERMITTING\Environmental_Permits\Approvals\EIA_Approval_20240620.pdf,EIA-2024-GR-0156,12 environmental conditions to maintain,In Compliance,John Smith,Main environmental approval - permanent validity,15000,2025-06-20,2026-06-20,2024-06-20,John Smith
+PER-002,Environmental,Water Usage Permit,Water Resources,Water Authority Athens,Petros Nikolaou,p.nikolaou@water-auth.gr,+30 210 7778888,2024-05-10,2024-07-15,2034-07-15,10,APPROVED,"Groundwater extraction permit for module cleaning max 5000 m3/year monitoring required",Yes,2033-07-15,04_PERMITTING\Environmental_Permits\Approvals\Water_Permit_20240715.pdf,WAT-ATH-2024-089,Quarterly usage reporting,In Compliance,Maria Lopez,For cleaning operations only,3500,2025-07-15,2026-07-15,2024-07-15,John Smith
+PER-003,Building,Building Permit,Construction,Municipal Authority Athens,Nikos Dimitriou,n.dimitriou@athens.gr,+30 210 7777777,2024-05-01,2024-08-15,2026-08-15,2,APPROVED,"Covers all civil works: foundations buildings roads drainage fencing",Yes,2026-02-15,04_PERMITTING\Building_Construction_Permits\Building_Permit_20240815.pdf,BP-ATH-2024-1247,Construction must match approved plans,In Compliance,John Smith,Standard 2-year validity,8500,2025-08-15,2026-02-15,2024-08-15,John Smith
+PER-004,Building,Civil Works Permit,Construction,Municipal Authority Athens,Nikos Dimitriou,n.dimitriou@athens.gr,+30 210 7777777,2024-05-15,2024-08-20,2026-08-20,2,APPROVED,Site preparation grading and access roads,Yes,2026-02-20,04_PERMITTING\Building_Construction_Permits\Civil_Works_Permit_20240820.pdf,CW-ATH-2024-0334,Erosion control measures required,In Compliance,John Smith,Separate from main building permit,4200,2025-08-20,2026-02-20,2024-08-20,John Smith
+PER-005,Grid Connection,Grid Connection Agreement,Electrical,National Grid Operator,Ioannis Stavrou,i.stavrou@gridoperator.gr,+30 210 5555555,2024-04-15,2024-09-20,Permanent,Permanent,APPROVED,"150kV grid connection 45 MW AC export capacity grid code compliance reactive power capability",No,N/A,04_PERMITTING\Grid_Connection_Permits\Grid_Connection_Agreement_20240920.pdf,GCA-2024-156-ATH,Must maintain grid code compliance,In Compliance,John Smith,Connection agreement signed with grid operator,25000,2025-09-20,2026-09-20,2024-09-20,John Smith
+PER-006,Grid Connection,Grid Impact Study Approval,Technical Study,National Grid Operator,Dr. Maria Antoniou,m.antoniou@gridoperator.gr,+30 210 5555556,2024-06-01,2024-07-20,N/A,N/A,APPROVED,Technical study confirms grid can accommodate 45 MW injection,No,N/A,04_PERMITTING\Grid_Connection_Permits\Grid_Impact_Study_20240720.pdf,GIS-2024-089,Grid reinforcement not required,In Compliance,John Smith,Independent study by grid operator,12000,N/A,N/A,2024-07-20,John Smith
+PER-007,Operating License,Electricity Generation License,Generation,Energy Regulatory Authority,Maria Antoniou,m.antoniou@rae.gr,+30 210 8888888,2024-10-01,2024-11-15,2044-11-15,20,APPROVED,"License to generate electricity 50 MWp capacity PPA required for operation",Yes,2043-11-15,04_PERMITTING\Operating_Licenses\Generation_License_20241115.pdf,EGL-2024-567-RES,Annual reporting required,In Compliance,Maria Lopez,20-year license renewable,18000,2025-11-15,2026-11-15,2024-11-15,Maria Lopez
+PER-008,Operating License,Operation & Maintenance License,Operations,Energy Regulatory Authority,Maria Antoniou,m.antoniou@rae.gr,+30 210 8888888,2024-10-15,2024-12-01,2034-12-01,10,APPROVED,Authorizes O&M activities safety protocols HSE compliance,Yes,2033-12-01,04_PERMITTING\Operating_Licenses\O&M_License_20241201.pdf,OML-2024-234,Safety audits every 2 years,In Compliance,Maria Lopez,Required for operations,8500,2025-12-01,2027-12-01,2024-12-01,Maria Lopez
+PER-009,Environmental,Air Quality Monitoring Permit,Monitoring,Environmental Agency,Dr. Sofia Georgiou,s.georgiou@env-agency.gr,+30 210 9997777,2024-06-15,2024-08-30,2029-08-30,5,APPROVED,Requires quarterly air quality monitoring during construction,Yes,2028-08-30,04_PERMITTING\Environmental_Permits\Approvals\Air_Quality_Permit_20240830.pdf,AQM-2024-445,Quarterly reports mandatory,In Compliance,John Smith,Construction phase monitoring,4500,2025-08-30,2025-11-30,2024-08-30,John Smith
+PER-010,Building,Road Access Permit,Access Rights,Highway Authority,Konstantinos Makris,k.makris@highway-auth.gr,+30 210 6665544,2024-07-01,2024-09-10,Permanent,Permanent,APPROVED,Access from main highway via existing agricultural road upgrade approved,No,N/A,04_PERMITTING\Building_Construction_Permits\Road_Access_Permit_20240910.pdf,RAP-2024-123,Road maintenance responsibility of developer,In Compliance,John Smith,Permanent access rights,6500,N/A,N/A,2024-09-10,John Smith
+PER-011,Safety,Fire Safety Certificate,Fire Protection,Athens Fire Department,Captain Giorgos Kostas,fire@athens-fire.gr,+30 210 9999999,2025-11-01,2025-11-20,2026-11-20,1,APPROVED,Fire safety systems approved extinguishers alarms emergency access,Yes,2026-10-20,04_PERMITTING\Operating_Licenses\Fire_Safety_Cert_20251120.pdf,FSC-2025-889,Annual inspection required,In Compliance,Maria Lopez,Annual renewal required,2800,N/A,2026-10-20,2025-11-20,Maria Lopez
+PER-012,Environmental,Waste Management Permit,Waste Handling,Environmental Agency,Dr. Sofia Georgiou,s.georgiou@env-agency.gr,+30 210 9997777,2025-10-15,2025-11-30,2030-11-30,5,APPROVED,Construction waste management plan approved recycling requirements,Yes,2029-11-30,04_PERMITTING\Environmental_Permits\Approvals\Waste_Mgmt_Permit_20251130.pdf,WMP-2025-223,Waste tracking records required,In Compliance,Maria Lopez,For operational phase waste,5500,2025-11-30,2026-11-30,2025-11-30,Maria Lopez
+PER-013,Grid Connection,Final Grid Connection Certificate,Commissioning,National Grid Operator,Ioannis Stavrou,i.stavrou@gridoperator.gr,+30 210 5555555,2025-12-01,2025-12-20,Permanent,Permanent,APPROVED,Final authorization to export power to grid commissioning complete,No,N/A,04_PERMITTING\Grid_Connection_Permits\Final_Grid_Cert_20251220.pdf,FGC-2025-156,System must maintain grid code compliance,In Compliance,Maria Lopez,COD certificate essential document,5000,N/A,2026-12-20,2025-12-20,Maria Lopez
+PER-014,Operating License,SCADA System Certificate,Technical Systems,Energy Regulatory Authority,Dr. Andreas Petrou,a.petrou@rae.gr,+30 210 8888889,2025-11-15,2025-12-05,2030-12-05,5,APPROVED,SCADA and control systems approved data logging requirements,Yes,2029-12-05,04_PERMITTING\Operating_Licenses\SCADA_Certificate_20251205.pdf,SCADA-2025-078,Real-time data to regulator,In Compliance,Maria Lopez,For remote monitoring compliance,3500,N/A,2026-12-05,2025-12-05,Maria Lopez
+PER-015,Health & Safety,Occupational Health Safety Certificate,Workplace Safety,Labor Inspectorate,Dimitris Papadopoulos,d.papadopoulos@labor.gov.gr,+30 210 4446655,2025-10-01,2025-11-10,2027-11-10,2,APPROVED,"Workplace safety compliance PPE requirements emergency procedures training records",Yes,2027-05-10,04_PERMITTING\Operating_Licenses\OHS_Certificate_20251110.pdf,OHS-2025-445,Safety training every 6 months,In Compliance,Maria Lopez,For operational staff,1800,2025-11-10,2026-05-10,2025-11-10,Maria Lopez
+"@
+Set-Content -Path "$ExcelTemplatesPath\Master_Permit_Register_Template.csv" -Value $permitCsv
+
+# Preventive Maintenance Log Template
+$maintenanceCsv = @"
+PM_ID,Equipment_Type,Equipment_ID,Equipment_Location,Task_Type,Maintenance_Activity,Task_Description,Frequency,Scheduled_Date,Scheduled_Time,Completed_Date,Completed_Time,Status,Technician_Name,Technician_Company,Work_Order,Duration_Hours,Cost_EUR,Parts_Used,Parts_Cost_EUR,Findings_Notes,Issues_Found,Corrective_Actions_Required,Follow_Up_Required,Follow_Up_Date,Next_Due_Date,Priority,Safety_Critical,Downtime_Minutes,Production_Loss_MWh,Weather_Conditions,Temperature_C,Humidity_Pct,Approved_By,Last_Updated,Updated_By
+PM-001,Inverter,INV-001,Block A Row 1,Inspection,Monthly inverter inspection,"Visual inspection clean air filters check displays verify alarms inspect connections",Monthly,2026-01-05,09:00,2026-01-05,10:30,COMPLETED,George Dimitriou,O&M Services SA,WO-2026-001,1.5,75,Air filters,15,All normal filters cleaned no alarms,None,None,No,N/A,2026-02-05,Routine,Yes,0,0,Clear,18,45,Maria Lopez,2026-01-05,George Dimitriou
+PM-002,Inverter,INV-002,Block A Row 2,Inspection,Monthly inverter inspection,"Visual inspection clean air filters check displays verify alarms inspect connections",Monthly,2026-01-05,09:00,2026-01-05,10:45,COMPLETED,George Dimitriou,O&M Services SA,WO-2026-001,1.5,75,Air filters,15,Minor communication alarm cleared,Communication alarm,Investigated and resolved,No,N/A,2026-02-05,Routine,Yes,5,0.1,Clear,18,45,Maria Lopez,2026-01-05,George Dimitriou
+PM-003,All Inverters,INV-001 to INV-025,All Blocks,Testing,Remote diagnostics,"Remote system check performance verification alarm history review communication test",Monthly,2026-01-10,08:00,2026-01-10,11:00,COMPLETED,Remote Monitoring Team,O&M Services SA,WO-2026-005,3.0,200,None,0,All 25 units performing within specifications no alarms,None,None,No,N/A,2026-02-10,Routine,No,0,0,Clear,19,42,Maria Lopez,2026-01-10,Remote Team
+PM-004,Transformer,TR-001,Block A MV Station,Inspection,Transformer oil and temperature check,"Oil level inspection temperature monitoring oil sampling if required bushing inspection",Monthly,2026-01-12,09:00,2026-01-12,10:00,COMPLETED,Elias Kostas,O&M Services SA,WO-2026-008,1.0,50,None,0,Oil level good temperature within normal range 65C,None,None,No,N/A,2026-02-12,Routine,Yes,0,0,Partly cloudy,17,48,Maria Lopez,2026-01-12,Elias Kostas
+PM-005,MV Switchgear,SWGR-MAIN,Main MV Switchgear Room,Inspection,MV switchgear visual inspection,"Visual inspection check indicators temperature check cable connections ventilation check",Monthly,2026-01-12,10:00,2026-01-12,11:00,COMPLETED,Elias Kostas,O&M Services SA,WO-2026-008,1.0,50,None,0,All indicators normal no abnormal sounds or odors,None,None,No,N/A,2026-02-12,Routine,Yes,0,0,Partly cloudy,17,48,Maria Lopez,2026-01-12,Elias Kostas
+PM-006,Tracker System,TRK-ALL,All Tracking Systems,Calibration,Tracker alignment and accuracy check,"Check tracking accuracy verify alignment test rotation range check sensors calibrate if needed",Quarterly,2026-01-15,08:00,2026-01-15,12:00,COMPLETED,Michalis Papadakis,Tracker Solutions SA,WO-2026-010,4.0,300,None,0,All trackers within +/- 0.5 degree specification minor adjustments on 3 units,3 trackers slightly off,Recalibrated 3 trackers,No,N/A,2026-04-15,Routine,No,120,2.5,Clear,16,50,Maria Lopez,2026-01-15,Michalis Papadakis
+PM-007,Tracker Motors,TRK-MOTORS-ALL,All Tracking Motors,Lubrication,Motor and gearbox lubrication,"Lubricate drive motors grease gearboxes check for unusual wear or noise inspect belts",Quarterly,2026-01-15,08:00,2026-01-15,14:00,COMPLETED,Michalis Papadakis,Tracker Solutions SA,WO-2026-010,6.0,400,Grease lubricant,120,All motors lubricated no abnormal wear detected,None,None,No,N/A,2026-04-15,Routine,No,180,3.8,Clear,16,50,Maria Lopez,2026-01-15,Michalis Papadakis
+PM-008,Solar Modules,MOD-BLOCK-A,Block A - 20000 modules,Cleaning,Module cleaning Block A,"Robotic cleaning or water wash remove dust and soiling check for damage visual inspection",Quarterly,2026-01-20,07:00,2026-01-22,17:00,COMPLETED,Cleaning Team,Cleaning Contractor SA,WO-2026-015,16.0,2500,Water detergent,150,Cleaning complete 2% production increase observed post-cleaning,None,None,No,N/A,2026-04-20,Routine,No,2880,60.0,Clear,20,35,Maria Lopez,2026-01-22,Cleaning Supervisor
+PM-009,Solar Modules,MOD-BLOCK-B,Block B - 20000 modules,Cleaning,Module cleaning Block B,"Robotic cleaning or water wash remove dust and soiling check for damage visual inspection",Quarterly,2026-01-21,07:00,2026-01-23,17:00,COMPLETED,Cleaning Team,Cleaning Contractor SA,WO-2026-015,16.0,2500,Water detergent,150,Cleaning completed successfully,None,None,No,N/A,2026-04-21,Routine,No,2880,60.0,Clear,21,38,Maria Lopez,2026-01-23,Cleaning Supervisor
+PM-010,Solar Modules,MOD-BLOCK-C,Block C - 20000 modules,Cleaning,Module cleaning Block C,"Robotic cleaning or water wash remove dust and soiling check for damage visual inspection",Quarterly,2026-01-22,07:00,2026-01-24,17:00,COMPLETED,Cleaning Team,Cleaning Contractor SA,WO-2026-015,16.0,2500,Water detergent,150,Cleaning completed successfully,None,None,No,N/A,2026-04-22,Routine,No,2880,60.0,Clear,19,40,Maria Lopez,2026-01-24,Cleaning Supervisor
+PM-011,Solar Modules,MOD-ALL,All Modules 100000 units,Inspection,Thermographic inspection,"Drone-based thermal imaging scan identify hot spots detect faulty cells/modules mark defects",Semi-Annual,2026-01-25,09:00,2026-01-26,16:00,COMPLETED,Thermal Imaging Team,Solar Tech Advisors,WO-2026-018,8.0,1200,None,0,3 modules with hot spots identified - flagged for replacement,Hot spots on 3 modules,Module replacement required,Yes,2026-02-15,2026-07-25,Medium,No,480,10.0,Clear,22,30,Maria Lopez,2026-01-26,Thermal Team Lead
+PM-012,SCADA System,SCADA-MAIN,Control Room,Testing,SCADA system backup and updates,"Full system backup software updates if available database integrity check communication test",Monthly,2026-01-28,08:00,2026-01-28,10:00,COMPLETED,IT Support Team,Internal IT,WO-2026-020,2.0,150,None,0,Backup successful no software updates available system running smoothly,None,None,No,N/A,2026-02-28,Routine,No,0,0,Clear,18,45,Maria Lopez,2026-01-28,IT Team
+PM-013,Weather Stations,WS-001 and WS-002,Weather Station Locations,Inspection,Weather station maintenance,"Clean sensors check calibration verify data accuracy inspect mounting structure",Monthly,2026-01-28,10:00,2026-01-28,11:30,COMPLETED,Elias Kostas,O&M Services SA,WO-2026-021,1.5,80,Cleaning supplies,10,Both stations cleaned and verified readings accurate,None,None,No,N/A,2026-02-28,Routine,No,0,0,Clear,19,43,Maria Lopez,2026-01-28,Elias Kostas
+PM-014,Site Infrastructure,ROADS-ALL,All Site Roads,Inspection,Site roads and drainage inspection,"Check for potholes inspect drainage systems vegetation control check signs",Monthly,2026-01-30,08:00,2026-01-30,10:00,COMPLETED,Site Maintenance Team,Internal,WO-2026-024,2.0,100,None,0,2 small potholes noted in access road - repair scheduled,Minor road damage,Road repair needed,Yes,2026-02-05,2026-02-28,Low,No,0,0,Clear,17,50,Maria Lopez,2026-01-30,Site Supervisor
+PM-015,Security System,SEC-CAMERAS,50 CCTV Cameras,Testing,Security system test,"Test all cameras check recording check access control system verify alarms",Monthly,2026-01-30,13:00,2026-01-30,16:00,IN PROGRESS,Security Team,Security Systems SA,WO-2026-025,4.0,200,None,0,Testing in progress 45 of 50 cameras tested,None,Complete remaining cameras,No,N/A,2026-02-28,Routine,Yes,0,0,Clear,19,45,Maria Lopez,2026-01-30,Security Team
+PM-016,Fire Protection,FIRE-ALL,All Fire Protection Equipment,Inspection,Fire safety equipment inspection,"Check fire extinguishers test fire alarms inspect emergency lighting verify signage",Quarterly,2026-01-31,09:00,2026-01-31,12:00,IN PROGRESS,Safety Officer,Internal HSE,WO-2026-026,3.0,150,None,0,Inspection ongoing 80% complete,None,Finalize inspection,No,N/A,2026-04-30,Routine,Yes,0,0,Clear,18,48,Maria Lopez,2026-01-31,Safety Officer
+PM-017,Transformers,TR-ALL,All 25 Transformers,Testing,Transformer oil analysis,"Oil sampling from all transformers lab analysis for breakdown voltage moisture PCBs acidity",Annual,2026-01-18,08:00,,,,OVERDUE,Laboratory Team,External Lab,WO-2026-012,2.0,800,Oil sampling kits,50,Samples collected and sent to lab - awaiting results,None,Monitor results,Yes,2026-02-10,2027-01-18,High,Yes,0,0,Clear,17,52,Maria Lopez,2026-01-18,Lab Coordinator
+PM-018,Perimeter,FENCE-ALL,Entire Perimeter 5.2 km,Inspection,Perimeter fence walk-through,"Walk entire perimeter check for damage check gates inspect sensors test alarms",Monthly,2026-01-25,08:00,,,,OVERDUE,Security Team,Internal Security,WO-2026-019,3.0,150,None,0,Rescheduled due to heavy rain - planned for next available day,Weather delay,Reschedule ASAP,Yes,2026-02-02,2026-02-25,Medium,No,0,0,Heavy rain,12,85,Maria Lopez,2026-01-25,Security Supervisor
+PM-019,Combiner Boxes,CB-ALL,All 200 Combiner Boxes,Inspection,Combiner box inspection sampling,"Inspect subset of combiner boxes check connections verify grounding thermography scan",Quarterly,2026-01-28,10:00,2026-01-29,15:00,COMPLETED,Elias Kostas,O&M Services SA,WO-2026-022,5.0,250,None,0,Inspected 50 combiner boxes (25% sample) - all in good condition,None,None,No,N/A,2026-04-28,Routine,No,0,0,Clear,20,40,Maria Lopez,2026-01-29,Elias Kostas
+PM-020,Vegetation,SITE-VEGETATION,Entire Site Area,Maintenance,Vegetation management,"Grass cutting weed control around equipment fire break maintenance visual inspection",Quarterly,2026-01-20,07:00,2026-01-21,17:00,COMPLETED,Landscaping Team,Landscaping Contractor,WO-2026-014,10.0,800,Herbicides fuel,120,Site vegetation under control fire breaks maintained,None,None,No,N/A,2026-04-20,Routine,Yes,0,0,Clear,19,42,Maria Lopez,2026-01-21,Landscape Supervisor
+"@
+Set-Content -Path "$ExcelTemplatesPath\Preventive_Maintenance_Log_Template.csv" -Value $maintenanceCsv
+
+# Warranty Register Template
+$warrantyCsv = @"
+Warranty_ID,Equipment_Type,Equipment_Description,Quantity,Serial_Number_Range,Supplier_Manufacturer,Warranty_Type,Warranty_Category,Start_Date,End_Date,Duration_Years,Remaining_Months,Status,Coverage_Details,Exclusions,Contact_Person,Contact_Email,Contact_Phone,Emergency_Contact,Emergency_Phone,Certificate_Location,Certificate_Number,Claim_Procedure,Claim_Form_Location,Claims_Made_Count,Last_Claim_Date,Response_Time_Hours,Parts_Availability,Labor_Included,Travel_Costs_Covered,Max_Claim_Amount_EUR,Deductible_EUR,Required_Maintenance,Inspection_Frequency,Last_Inspection_Date,Next_Inspection_Date,Warranty_Transfer_Allowed,Transfer_Fee_EUR,Extension_Available,Extension_Cost_EUR,Notes,Responsible_Person,Last_Updated,Updated_By
+WAR-001,Solar PV Modules,Bifacial monocrystalline 500W modules,100000,MOD-000001 to MOD-100000,Module Supplier Inc,Product Warranty,Manufacturer Defect,2025-12-31,2037-12-31,12,132,ACTIVE,"Materials and workmanship defects cell defects junction box failures glass breakage (non-impact) frame corrosion electrical failures",Impact damage vandalism improper installation misuse extreme weather events,John Davis,support@modulesupplier.com,+1-555-0100,Technical Hotline,+1-555-0101,09_COMMISSIONING_COD\Warranty_Certificates\Module_Product_Warranty.pdf,MW-2025-ATH-001,"Contact support with photos serial numbers describe issue await RMA number ship defective module receive replacement",Forms\Module_Claim_Form.pdf,0,N/A,48,Stock in regional warehouse,No - shipping only,No,N/A,0,Annual visual inspection,Annual,2026-01-26,2027-01-26,Yes,5000,No,N/A,100000 modules covered - Tier 1 supplier,Maria Lopez,2025-12-31,System
+WAR-002,Solar PV Modules,Bifacial monocrystalline 500W modules,100000,MOD-000001 to MOD-100000,Module Supplier Inc,Performance Warranty,Power Output Guarantee,2025-12-31,2050-12-31,25,300,ACTIVE,"Linear power output guarantee: Year 1: 97.5% Year 5: 95.0% Year 10: 90.0% Year 15: 87.5% Year 20: 85.0% Year 25: 84.8%","Normal degradation improper installation shading soiling electrical system issues inverter problems",John Davis,support@modulesupplier.com,+1-555-0100,Technical Hotline,+1-555-0101,09_COMMISSIONING_COD\Warranty_Certificates\Module_Performance_Warranty.pdf,PW-2025-ATH-001,"Annual independent performance test required below threshold triggers claim process compensation via additional modules or credit",Forms\Performance_Claim_Form.pdf,0,N/A,720,N/A - performance claim,No,No,50% of module value,0,Annual performance testing by independent engineer,Annual,N/A,2027-01-01,Yes,10000,No,N/A,Performance testing required annually - keep all test reports,Maria Lopez,2025-12-31,System
+WAR-003,Central Inverters,2.0 MW central inverters,25,INV-001 to INV-025,Inverter Tech GmbH,Product Warranty,Standard Product,2025-12-31,2030-12-31,5,60,ACTIVE,"Parts and labor on-site repair covers all components hardware failures software issues control boards fans displays power modules","Improper installation incorrect settings external damage lightning surges grid faults",Hans Mueller,service@invertertech.de,+49-123-456789,24/7 Hotline,+49-123-456700,09_COMMISSIONING_COD\Warranty_Certificates\Inverter_Warranty.pdf,INV-2025-GR-025,"Call 24/7 hotline describe issue remote diagnostics within 4 hours on-site within 48 hours if needed",Forms\Inverter_Claim_Form.pdf,1,2026-01-08,4,Stock in Germany,Yes - on-site,Yes - up to 500 EUR,Inverter replacement value,0,Quarterly filter cleaning required,Quarterly,2026-01-05,2026-04-05,Yes,8000,Yes,125000,Standard 5-year warranty included in purchase,Maria Lopez,2025-12-31,System
+WAR-004,Central Inverters,2.0 MW central inverters,25,INV-001 to INV-025,Inverter Tech GmbH,Extended Warranty,Extended Product,2030-12-31,2035-12-31,5,120,ACTIVE,"Parts only customer provides labor covers major components power modules control boards excludes fans filters contactors","Wear and tear items improper maintenance customer-caused damage environmental damage",Hans Mueller,service@invertertech.de,+49-123-456789,24/7 Hotline,+49-123-456700,09_COMMISSIONING_COD\Warranty_Certificates\Inverter_Extended_Warranty.pdf,INV-EXT-2025-GR-025,Parts shipped within 72 hours customer arranges installation,Forms\Inverter_Claim_Form.pdf,0,N/A,72,Made-to-order parts,No,No,50000,0,Maintain service records,Quarterly,N/A,2030-01-01,No,N/A,No,N/A,Extended warranty purchased separately for €175000,Maria Lopez,2025-12-31,System
+WAR-005,Tracking System,Single-axis trackers horizontal,833,TRK-001 to TRK-833,Tracker Solutions SA,Product Warranty,Structural and Mechanical,2025-12-31,2030-12-31,5,60,ACTIVE,"Structural components motors gearboxes controllers bearings mounting hardware mechanical failures electrical issues",Wind damage over design limits lightning damage vandalism improper maintenance soil movement,Carlos Rodriguez,warranty@trackersolutions.es,+34-91-1234567,Service Hotline,+34-91-1234568,09_COMMISSIONING_COD\Warranty_Certificates\Tracker_Warranty.pdf,TRK-2025-GR-833,"Email warranty team with tracker ID photos description regional tech assigned within 5 days parts shipped",Forms\Tracker_Claim_Form.pdf,3,2026-01-22,120,Regional stock Spain,Depends on issue,No,Replacement value,0,Annual lubrication required,Quarterly,2026-01-15,2026-04-15,Yes,25000,No,N/A,Wind design limit 145 km/h - claims above this excluded,Maria Lopez,2025-12-31,System
+WAR-006,MV Transformers,2.0 MVA pad-mount transformers,25,TRF-001 to TRF-025,Electrical Supplies Ltd,Product Warranty,Manufacturing Defects,2025-12-31,2028-12-31,3,36,ACTIVE,"Manufacturing defects winding failures bushing failures internal faults oil leaks (manufacturing defect)","Improper installation overloading external damage lightning oil contamination",Maria Papadopoulou,service@electricalsupplies.com,+30-210-9876543,Emergency Line,+30-210-9876544,09_COMMISSIONING_COD\Warranty_Certificates\Transformer_Warranty.pdf,TRF-2025-ATH-025,"Notify immediately for failures oil sampling required for oil-related claims replacement or repair at manufacturer discretion",Forms\Transformer_Claim_Form.pdf,0,N/A,168,Made-to-order,Yes - subcontracted,Yes,Transformer value,5000,Annual oil testing required,Annual,2026-01-18,2027-01-18,No,N/A,Yes,45000,Oil testing mandatory for warranty validity,Maria Lopez,2025-12-31,System
+WAR-007,MV Switchgear,33kV RMU and panels,5,SWGR-001 to SWGR-005,Grid Solutions Ltd,Product Warranty,Standard Product,2025-12-31,2027-12-31,2,24,EXPIRING SOON,Parts and labor on-site repair within warranty period,Improper operation external damage switchgear modifications,Andrew Wilson,support@gridsolutions.co.uk,+44-20-12345678,Service Desk,+44-20-12345600,09_COMMISSIONING_COD\Warranty_Certificates\Switchgear_Warranty.pdf,SWGR-2025-GR-005,Contact service desk schedule inspection repair or replace as needed,Forms\Switchgear_Claim_Form.pdf,0,N/A,120,Limited stock,Yes,Yes - up to 800 EUR,Equipment value,0,Annual inspection recommended,Annual,2025-12-20,2026-12-20,No,N/A,Yes,32000,Consider service contract after warranty - expires Q4 2027,Maria Lopez,2025-12-31,System
+WAR-008,Substation Equipment,150/33kV transformer and HV equipment,1,MAIN-TRF-001,Grid Solutions Ltd,Product Warranty,Major Equipment,2025-12-31,2027-12-31,2,24,EXPIRING SOON,Equipment only no labor included manufacturing defects,Installation issues improper operation external factors,Andrew Wilson,support@gridsolutions.co.uk,+44-20-12345678,Service Desk,+44-20-12345600,09_COMMISSIONING_COD\Warranty_Certificates\Substation_Warranty.pdf,SUB-2025-GR-001,Manufacturer inspection required before claim approval,Forms\Substation_Claim_Form.pdf,0,N/A,240,Made-to-order long lead time,No,No,N/A,0,Annual inspection,Annual,2025-12-20,2026-12-20,No,N/A,Yes,85000,Critical equipment - consider extended warranty,Maria Lopez,2025-12-31,System
+WAR-009,MV Cables,33kV underground cables,15000,N/A - cables,Electrical Supplies Ltd,Product Warranty,Cable Manufacturing,2025-12-31,2035-12-31,10,120,ACTIVE,Manufacturing defects material failures,Installation damage mechanical damage dig-ins rodent damage,Maria Papadopoulou,service@electricalsupplies.com,+30-210-9876543,Emergency Line,+30-210-9876544,09_COMMISSIONING_COD\Warranty_Certificates\Cable_Warranty.pdf,CBL-2025-ATH-15K,Cable testing required for claims fault location evidence of manufacturing defect,Forms\Cable_Claim_Form.pdf,0,N/A,240,Depends on cable type,Installation subcontracted,No,Cable value,0,Cable testing at installation,N/A,2025-12-15,N/A,No,N/A,No,N/A,15 kilometers of MV cables installed - maintain as-built records,Maria Lopez,2025-12-31,System
+WAR-010,SCADA System,SCADA hardware and software,1,SCADA-SYS-001,SCADA Systems Inc,Software and Hardware,Integrated System,2025-12-31,2027-12-31,2,24,EXPIRING SOON,"Software updates hardware repair includes servers workstations network equipment licenses",Misuse unauthorized modifications network issues outside system,Jennifer Kim,support@scadasystems.com,+1-555-0200,Tech Support,+1-555-0201,09_COMMISSIONING_COD\Warranty_Certificates\SCADA_Warranty.pdf,SCADA-2025-GR-001,Remote support 24/7 on-site within 7 days for hardware issues,Forms\SCADA_Claim_Form.pdf,0,N/A,2,Stock in USA,Yes - remote or on-site,Yes - covered,System value,0,Software updates quarterly,Quarterly,2025-12-28,2026-03-28,No,N/A,Yes,78000,Software licenses expire with warranty - renewal required,Maria Lopez,2025-12-31,System
+WAR-011,Weather Stations,Meteorological monitoring stations,2,WS-001 and WS-002,Meteo Equipment Ltd,Product Warranty,Sensors and Data Logger,2025-12-31,2027-12-31,2,24,EXPIRING SOON,Sensors data logger communication equipment,Calibration wear and tear lightning damage,Pierre Dubois,service@meteoequipment.com,+33-1-23456789,Service Line,+33-1-23456700,09_COMMISSIONING_COD\Warranty_Certificates\Weather_Station_Warranty.pdf,MET-2025-GR-002,Return to manufacturer for repair or replacement,Forms\Weather_Station_Claim_Form.pdf,0,N/A,168,Stock in France,No,No,Equipment value,0,Annual calibration required (not covered),Annual,2026-01-28,2027-01-28,No,N/A,Yes,12000,Calibration not included in warranty - separate cost,Maria Lopez,2025-12-31,System
+WAR-012,Security System,CCTV cameras and access control,55,CAM-001 to CAM-050 + ACC-001 to ACC-005,Security Systems SA,Product Warranty,Security Equipment,2025-12-31,2028-12-31,3,36,ACTIVE,"Cameras sensors access control system recording equipment control panels",Physical damage vandalism lightning improper use,Dimitris Kostas,support@securitysystems.gr,+30-210-5555555,24/7 Security,+30-210-5555556,09_COMMISSIONING_COD\Warranty_Certificates\Security_Warranty.pdf,SEC-2025-ATH-055,Call support schedule service visit repair or replace defective items,Forms\Security_Claim_Form.pdf,0,N/A,24,Local stock,Yes,Yes - up to 200 EUR,Equipment value,0,Quarterly system check,Quarterly,2026-01-30,2026-04-30,Yes,2000,Yes,15000,50 cameras + 5 access control points,Maria Lopez,2025-12-31,System
+WAR-013,EPC Contract,All construction work and installation,1,Entire Project,EPC Contractor Ltd,Workmanship Warranty,Construction Defects,2025-12-31,2027-12-31,2,24,EXPIRING SOON,"All construction workmanship installation errors defective work material failures from improper installation",Design errors equipment defects normal wear and tear,George Papadopoulos,warranty@epccontractor.com,+30-210-9876543,Project Hotline,+30-210-9876544,09_COMMISSIONING_COD\Warranty_Certificates\EPC_Workmanship_Warranty.pdf,EPC-WRK-2025-ATH,"Formal written notice required inspection within 30 days repair within 90 days or financial settlement",Forms\EPC_Warranty_Claim_Form.pdf,0,N/A,720,Subcontractor dependent,Yes,Yes,10000000,0,None required,N/A,N/A,N/A,No,N/A,No,N/A,Covers all construction defects for 2 years from COD,Maria Lopez,2025-12-31,System
+WAR-014,EPC Contract,Performance guarantee,1,Entire Project,EPC Contractor Ltd,Performance Guarantee,System Performance,2025-12-31,2026-12-31,1,0,EXPIRED,85% Performance Ratio guaranteed for first year measured annually,Force majeure grid curtailment customer-caused issues,George Papadopoulos,warranty@epccontractor.com,+30-210-9876543,Project Hotline,+30-210-9876544,09_COMMISSIONING_COD\Warranty_Certificates\EPC_Performance_Guarantee.pdf,EPC-PRF-2025-ATH,Independent performance test liquidated damages if below 85% PR,Forms\Performance_Guarantee_Claim_Form.pdf,0,N/A,N/A,N/A,N/A,N/A,5000000,0,Annual performance test required,Annual,2026-12-20,N/A,No,N/A,No,N/A,Guarantee met - 86.2% PR achieved in first year,Maria Lopez,2026-12-31,System
+WAR-015,Civil Works,Structural foundation works,1,All Foundations,Civil Contractors SA,Structural Warranty,Foundation Integrity,2025-12-31,2035-12-31,10,120,ACTIVE,"Structural integrity of all foundations settlement issues cracking load-bearing failures",Seismic events beyond design floods force majeure soil liquefaction,Nikos Stavrou,claims@civilcontractors.gr,+30-210-7777777,Emergency,+30-210-7777778,09_COMMISSIONING_COD\Warranty_Certificates\Civil_Structural_Warranty.pdf,CIV-STR-2025-ATH,Structural engineer report required foundation inspection repair or replacement,Forms\Civil_Warranty_Claim_Form.pdf,0,N/A,240,Depends on repair,Yes - for repairs,Yes,Repair cost,10000,Annual settlement monitoring,Annual,2026-01-01,2027-01-01,No,N/A,No,N/A,Covers structural issues and settlements - monitor foundations annually,Maria Lopez,2025-12-31,System
+"@
+Set-Content -Path "$ExcelTemplatesPath\Warranty_Register_Template.csv" -Value $warrantyCsv
+
+Write-Host "  ✓ Created: 5 CSV template files in EXCEL_TEMPLATES folder" -ForegroundColor Gray
+
+# ========================================
+# CREATE STATUS FILE TEMPLATE
+# ========================================
+$statusTemplate = @"
+STATUS: [PHASE NAME]
+===============================
+
+Phase Started: [Date]
+Responsible PM: [Name]
+Target Completion: [Date]
+
+Key Activities in Progress:
+1. [Activity 1]
+2. [Activity 2]
+3. [Activity 3]
+
+Next Milestones:
+- [Milestone 1]: [Date]
+- [Milestone 2]: [Date]
+
+Issues/Risks:
+- [Issue/Risk 1]
+- [Issue/Risk 2]
+
+Phase Closed: [Will be filled when phase ends]
+Last Updated: [Date]
+Updated By: [Name]
+"@
+Set-Content -Path "$AssetTemplatePath\_STATUS_TEMPLATE.txt" -Value $statusTemplate
+
+# ========================================
+# CREATE README FILES
+# ========================================
+Write-Host "`nCreating README files..." -ForegroundColor Green
+
+$readmeContent = @"
+# Asset Lifecycle File Management System - SIMPLIFIED v2.0
+
+## Core Principle
+"One Asset, One Folder, One Location, Complete History"
+
+CRITICAL SIMPLIFICATION:
+- ALL assets in ASSETS\ folder - no sub-categorization
+- NO folder movement - assets stay in ASSETS\ forever
+- Status files show current phase - no need to move folders
+
+## Folder Structure
+Each asset folder contains:
+- Status files: _STATUS_01_PIPELINE.txt, _STATUS_02_UNDER_DEVELOPMENT.txt, etc.
+- 00-14: All lifecycle phases
+- Documents NEVER move from their phase folders
+
+## Status Tracking
+Look for numbered status files to see phase progression:
+- _STATUS_01_PIPELINE.txt only = Pipeline phase
+- _STATUS_02_UNDER_DEVELOPMENT.txt = Development phase
+- _STATUS_03_UNDER_CONSTRUCTION.txt = Construction phase
+- _STATUS_04_OPERATIONAL.txt = Operational phase
+
+## Finding Assets
+- By type: Sort alphabetically (all PV together, all Wind together)
+- By status: Search for "_STATUS_04_OPERATIONAL.txt"
+- By subcompany: Search for "AEN_*" or "BGP_*"
+
+## Key Guidelines
+1. Assets NEVER move from ASSETS\ folder
+2. Update status files as phases progress
+3. Keep ALL status files for audit trail
+4. Set completed phases to read-only
+5. Use proper naming conventions
+
+## Need Help?
+- Full documentation: TEMPLATES\SYSTEM_DOCUMENTATION\
+- Contact: [Your support contact]
+
+Last Updated: $(Get-Date -Format "yyyy-MM-dd")
+"@
+
+$readmeLocations = @(
+    $RootPath,
+    (Join-Path $RootPath "ASSETS"),
+    $AssetTemplatePath
+)
+
+foreach ($location in $readmeLocations) {
+    $readmePath = Join-Path $location "README.txt"
+    Set-Content -Path $readmePath -Value $readmeContent
+}
+
+# ========================================
+# COMPLETION SUMMARY
+# ========================================
+Write-Host "`n========================================================" -ForegroundColor Cyan
+Write-Host "  FOLDER STRUCTURE CREATED SUCCESSFULLY!" -ForegroundColor Green
+Write-Host "  Per-Asset Lifecycle - SIMPLIFIED VERSION 2.0" -ForegroundColor Green
+Write-Host "========================================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Summary:" -ForegroundColor Yellow
+Write-Host "  • Main structure: 4 Level-1 folders (ASSETS, CORPORATE, TEMPLATES, ARCHIVE)" -ForegroundColor White
+Write-Host "  • ASSETS: Single flat folder for all assets (no sub-categories!)" -ForegroundColor White
+Write-Host "  • Complete lifecycle template: 14 phases with 100+ subfolders" -ForegroundColor White
+Write-Host "  • 5 CSV templates created in TEMPLATES\EXCEL_TEMPLATES\" -ForegroundColor White
+Write-Host "  • Corporate: 5 departments" -ForegroundColor White
+Write-Host "  • Archive: Simple year-based structure" -ForegroundColor White
+Write-Host ""
+Write-Host "Location: $RootPath" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Key Advantages of SIMPLIFIED System:" -ForegroundColor Yellow
+Write-Host "  ✓ ALL assets in one ASSETS\ folder - ultra simple!" -ForegroundColor Green
+Write-Host "  ✓ NO folder movement EVER - assets stay put!" -ForegroundColor Green
+Write-Host "  ✓ Status files show phase - no category management!" -ForegroundColor Green
+Write-Host "  ✓ Easy sorting and searching by any criteria" -ForegroundColor Green
+Write-Host "  ✓ Complete audit trail with numbered status files" -ForegroundColor Green
+Write-Host ""
+Write-Host "Next Steps:" -ForegroundColor Yellow
+Write-Host "  1. Review the created structure" -ForegroundColor White
+Write-Host "  2. Place comprehensive README.md in TEMPLATES\SYSTEM_DOCUMENTATION\" -ForegroundColor White
+Write-Host "  3. Customize subcompany codes for your organization" -ForegroundColor White
+Write-Host "  4. Create your first asset:" -ForegroundColor White
+Write-Host "     - Copy TEMPLATES\ASSET_LIFECYCLE_TEMPLATE\" -ForegroundColor White
+Write-Host "     - Rename to [SUBCO]_[TYPE][ID]_[Name]_[Location]" -ForegroundColor White
+Write-Host "     - Place DIRECTLY in ASSETS\ folder (not in subcategories!)" -ForegroundColor White
+Write-Host "     - Create _STATUS_01_PIPELINE.txt file" -ForegroundColor White
+Write-Host "     - Fill out 00_ASSET_MASTER\Asset_Summary_Sheet.csv" -ForegroundColor White
+Write-Host "  5. Set up access permissions" -ForegroundColor White
+Write-Host "  6. Train team members" -ForegroundColor White
+Write-Host ""
+Write-Host "CSV Templates Available:" -ForegroundColor Yellow
+Write-Host "  • Asset_Summary_Sheet_Template.csv" -ForegroundColor White
+Write-Host "  • Construction_Budget_Tracker_Template.csv" -ForegroundColor White
+Write-Host "  • Master_Permit_Register_Template.csv" -ForegroundColor White
+Write-Host "  • Preventive_Maintenance_Log_Template.csv" -ForegroundColor White
+Write-Host "  • Warranty_Register_Template.csv" -ForegroundColor White
+Write-Host ""
+Write-Host "========================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Optional: Open the root folder
+$openFolder = Read-Host "Would you like to open the root folder now? (Y/N)"
+if ($openFolder -eq 'Y' -or $openFolder -eq 'y') {
+    Start-Process explorer.exe -ArgumentList $RootPath
+}
+
+Write-Host "`nScript completed!" -ForegroundColor Green
+Write-Host "Your ultra-simple continuous lifecycle file system is ready to use." -ForegroundColor Green
+Write-Host "Remember: Assets NEVER move from ASSETS\ folder!" -ForegroundColor Yellow
+Read-Host "Press Enter to exit"
